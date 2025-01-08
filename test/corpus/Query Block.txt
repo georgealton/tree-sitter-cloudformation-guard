@@ -1,0 +1,282 @@
+===
+Query
+===
+let t = x.y
+let t = x.y.*
+let t = x.y.*[*]
+let t = x.y[*]
+let t = x.y[ a == 1 ]
+let t = x.y[ 
+    a == 1  or
+    b == 2
+    c == 2
+]
+let t = x[ a == 1].y[b == 2].g
+let x = T."1A:B:C"[*]
+let x = T."1A:B:C"[0]
+let x = T."1A:B:C"[0].B
+---
+
+(guard
+  (assignment
+    name: (variable_name)
+    value: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier))))))
+  (assignment
+    name: (variable_name)
+    value: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))
+        (traversal
+          (wildcard)))))
+  (assignment
+    name: (variable_name)
+    value: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))
+        (traversal
+          (wildcard))
+        (filter
+          (wildcard)))))
+  (assignment
+    name: (variable_name)
+    value: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))
+        (filter
+          (wildcard)))))
+  (assignment
+    name: (variable_name)
+    value: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))
+        (filter
+          left: (access
+            (property
+              (identifier)))
+          comparison: (binary_comparison
+            operator: (binary_operator)
+            right: (literal_value
+              (integer)))))))
+  (assignment
+    name: (variable_name)
+    value: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))
+        (filter
+          left: (access
+            (property
+              (identifier)))
+          comparison: (binary_comparison
+            operator: (binary_operator)
+            right: (literal_value
+              (integer)))
+          (or_term)
+          left: (access
+            (property
+              (identifier)))
+          comparison: (binary_comparison
+            operator: (binary_operator)
+            right: (literal_value
+              (integer)))
+          left: (access
+            (property
+              (identifier)))
+          comparison: (binary_comparison
+            operator: (binary_operator)
+            right: (literal_value
+              (integer)))))))
+  (assignment
+    name: (variable_name)
+    value: (query
+      (access
+        (property
+          (identifier))
+        (filter
+          left: (access
+            (property
+              (identifier)))
+          comparison: (binary_comparison
+            operator: (binary_operator)
+            right: (literal_value
+              (integer))))
+        (traversal
+          (property
+            (identifier)))
+        (filter
+          left: (access
+            (property
+              (identifier)))
+          comparison: (binary_comparison
+            operator: (binary_operator)
+            right: (literal_value
+              (integer))))
+        (traversal
+          (property
+            (identifier))))))
+  (assignment
+    name: (variable_name)
+    value: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (string)))
+        (filter
+          (wildcard)))))
+  (assignment
+    name: (variable_name)
+    value: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (string)))
+        (filter
+          (integer)))))
+  (assignment
+    name: (variable_name)
+    value: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (string)))
+        (filter
+          (integer))
+        (traversal
+          (property
+            (identifier)))))))
+
+===
+Empty Query
+===
+%X.Y {
+}
+---
+
+(guard
+  (query_block
+    (query
+      (access
+        (variable_reference)
+        (traversal
+          (property
+            (identifier)))))))
+
+===
+Query With Clause
+===
+%test.x {
+    Test in %test
+}
+
+%test.x {
+    Test.A == 1
+    Test.A == 1 or Test.B exists or
+    Test.A == 1
+}
+
+----
+
+(guard
+  (query_block
+    (query
+      (access
+        (variable_reference)
+        (traversal
+          (property
+            (identifier)))))
+    (clause
+      left: (query
+        (access
+          (property
+            (identifier))))
+      comparison: (binary_comparison
+        operator: (binary_operator)
+        right: (query
+          (access
+            (variable_reference))))))
+  (query_block
+    (query
+      (access
+        (variable_reference)
+        (traversal
+          (property
+            (identifier)))))
+    (clause
+      left: (query
+        (access
+          (property
+            (identifier))
+          (traversal
+            (property
+              (identifier)))))
+      comparison: (binary_comparison
+        operator: (binary_operator)
+        right: (literal_value
+          (integer))))
+    (clause
+      left: (query
+        (access
+          (property
+            (identifier))
+          (traversal
+            (property
+              (identifier)))))
+      comparison: (binary_comparison
+        operator: (binary_operator)
+        right: (literal_value
+          (integer))))
+    (or_term)
+    (clause
+      left: (query
+        (access
+          (property
+            (identifier))
+          (traversal
+            (property
+              (identifier)))))
+      comparison: (unary_comparison
+        operator: (unary_operator)))
+    (or_term)
+    (clause
+      left: (query
+        (access
+          (property
+            (identifier))
+          (traversal
+            (property
+              (identifier)))))
+      comparison: (binary_comparison
+        operator: (binary_operator)
+        right: (literal_value
+          (integer))))))

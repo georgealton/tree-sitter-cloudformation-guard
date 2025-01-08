@@ -1,0 +1,83 @@
+===
+Plain Comment
+===
+# Test
+
+---
+
+(guard
+  (comment))
+
+===
+Multiple Comments
+===
+# Test
+# Test
+
+---
+
+(guard
+  (comment)
+  (comment))
+
+===
+Comment in Rules
+===
+# This Rule is a 
+# Test
+
+rule test {
+    # This Rule is a 
+}
+
+---
+
+(guard
+  (comment)
+  (comment)
+  (named_rule_block
+    name: (variable_name)
+    (comment)))
+
+===
+Comment in When
+===
+# This Rule is a 
+# Test
+
+when Properties exists {
+# Test
+}
+
+---
+
+(guard
+  (comment)
+  (comment)
+  (when_block
+    (when_expression
+      (clause
+        left: (query
+          (access
+            (property
+              (identifier))))
+        comparison: (unary_comparison
+          operator: (unary_operator))))
+    (comment)))
+
+===
+Comment in Loop
+===
+%a[*] {
+# Test
+}
+---
+
+(guard
+  (query_block
+    (query
+      (access
+        (variable_reference)
+        (filter
+          (wildcard))))
+    (comment)))

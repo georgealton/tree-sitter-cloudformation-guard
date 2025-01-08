@@ -1,0 +1,34 @@
+===
+Test
+===
+Resources.NewVolume.Properties.NewVolume.VolumeType in [ 'io1','io2','gp3' ] 
+---
+
+(guard
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))
+        (traversal
+          (property
+            (identifier)))
+        (traversal
+          (property
+            (identifier)))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (binary_comparison
+      operator: (binary_operator)
+      right: (literal_value
+        (list
+          item: (literal_value
+            (string))
+          item: (literal_value
+            (string))
+          item: (literal_value
+            (string)))))))

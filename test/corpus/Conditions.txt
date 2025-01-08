@@ -1,0 +1,455 @@
+====================
+Binary Not In Range
+====================
+
+Test.A not in r[1,10]
+Test.A not IN r[1,10]
+Test.A not in r[1,10]
+Test.A ! IN r[1,10]
+
+---
+
+(guard
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (binary_comparison
+      (not_keyword)
+      operator: (binary_operator)
+      right: (literal_value
+        (range
+          start: (integer)
+          end: (integer)))))
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (binary_comparison
+      (not_keyword)
+      operator: (binary_operator)
+      right: (literal_value
+        (range
+          start: (integer)
+          end: (integer)))))
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (binary_comparison
+      (not_keyword)
+      operator: (binary_operator)
+      right: (literal_value
+        (range
+          start: (integer)
+          end: (integer)))))
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (binary_comparison
+      (not_keyword)
+      operator: (binary_operator)
+      right: (literal_value
+        (range
+          start: (integer)
+          end: (integer))))))
+
+====================
+Binary In Range
+====================
+
+Test.A in r[1,10]
+Test.A IN r[1,10]
+
+---
+
+(guard
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (binary_comparison
+      operator: (binary_operator)
+      right: (literal_value
+        (range
+          start: (integer)
+          end: (integer)))))
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (binary_comparison
+      operator: (binary_operator)
+      right: (literal_value
+        (range
+          start: (integer)
+          end: (integer))))))
+
+====================
+Binary Equality
+====================
+
+Test.A == 1
+
+---
+
+(guard
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (binary_comparison
+      operator: (binary_operator)
+      right: (literal_value
+        (integer)))))
+
+====================
+Binary Inequality
+====================
+
+Test.T != 1
+
+---
+
+(guard
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (binary_comparison
+      operator: (binary_operator)
+      right: (literal_value
+        (integer)))))
+
+====================
+Binary Greater
+====================
+
+Test.T > 1
+
+---
+
+(guard
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (binary_comparison
+      operator: (binary_operator)
+      right: (literal_value
+        (integer)))))
+
+====================
+Binary Greater or Equal
+====================
+
+Test.T >= 1
+
+---
+
+(guard
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (binary_comparison
+      operator: (binary_operator)
+      right: (literal_value
+        (integer)))))
+
+====================
+Binary Less
+====================
+
+Test.T < 1
+
+---
+
+(guard
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (binary_comparison
+      operator: (binary_operator)
+      right: (literal_value
+        (integer)))))
+
+====================
+Binary Less or Equal
+====================
+
+Test.T <= 1
+
+---
+
+(guard
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (binary_comparison
+      operator: (binary_operator)
+      right: (literal_value
+        (integer)))))
+
+====================
+Binary In
+====================
+
+Test.T in [1, 2, 3]
+Test.T IN [1, 2, 3]
+
+---
+
+(guard
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (binary_comparison
+      operator: (binary_operator)
+      right: (literal_value
+        (list
+          item: (literal_value
+            (integer))
+          item: (literal_value
+            (integer))
+          item: (literal_value
+            (integer))))))
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (binary_comparison
+      operator: (binary_operator)
+      right: (literal_value
+        (list
+          item: (literal_value
+            (integer))
+          item: (literal_value
+            (integer))
+          item: (literal_value
+            (integer)))))))
+
+====================
+Binary Not In
+====================
+
+Test.T not in [1, 2, 3]
+Test.T not IN [1, 2, 3]
+Test.T ! in [1, 2, 3]
+Test.T ! IN [1, 2, 3]
+
+---
+
+(guard
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (binary_comparison
+      (not_keyword)
+      operator: (binary_operator)
+      right: (literal_value
+        (list
+          item: (literal_value
+            (integer))
+          item: (literal_value
+            (integer))
+          item: (literal_value
+            (integer))))))
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (binary_comparison
+      (not_keyword)
+      operator: (binary_operator)
+      right: (literal_value
+        (list
+          item: (literal_value
+            (integer))
+          item: (literal_value
+            (integer))
+          item: (literal_value
+            (integer))))))
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (binary_comparison
+      (not_keyword)
+      operator: (binary_operator)
+      right: (literal_value
+        (list
+          item: (literal_value
+            (integer))
+          item: (literal_value
+            (integer))
+          item: (literal_value
+            (integer))))))
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (binary_comparison
+      (not_keyword)
+      operator: (binary_operator)
+      right: (literal_value
+        (list
+          item: (literal_value
+            (integer))
+          item: (literal_value
+            (integer))
+          item: (literal_value
+            (integer)))))))
+
+====================
+Unary Exists
+====================
+
+Test.T exists
+Test.T EXISTS
+
+---
+
+(guard
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (unary_comparison
+      operator: (unary_operator)))
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (unary_comparison
+      operator: (unary_operator))))
+
+====================
+Unary Not Exists
+====================
+
+Test.T !exists
+Test.T !EXISTS
+Test.T not EXISTS
+
+---
+
+(guard
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (unary_comparison
+      (not_keyword)
+      operator: (unary_operator)))
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (unary_comparison
+      (not_keyword)
+      operator: (unary_operator)))
+  (clause
+    left: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (property
+            (identifier)))))
+    comparison: (unary_comparison
+      (not_keyword)
+      operator: (unary_operator))))

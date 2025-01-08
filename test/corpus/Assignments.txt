@@ -1,0 +1,254 @@
+=================
+Assign Query
+=================
+
+let x = Resources.*
+
+let ecs_tasks = Resources.*[ 
+    Type == 'AWS::ECS::TaskDefinition'
+]
+
+let ecs_tasks = Resources.*[ 
+    Properties.NetworkInterfaces[*] !empty
+]
+
+---
+
+(guard
+  (assignment
+    name: (variable_name)
+    value: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (wildcard)))))
+  (assignment
+    name: (variable_name)
+    value: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (wildcard))
+        (filter
+          left: (access
+            (property
+              (identifier)))
+          comparison: (binary_comparison
+            operator: (binary_operator)
+            right: (literal_value
+              (string)))))))
+  (assignment
+    name: (variable_name)
+    value: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (wildcard))
+        (filter
+          left: (access
+            (property
+              (identifier))
+            (traversal
+              (property
+                (identifier)))
+            (filter
+              (wildcard)))
+          comparison: (unary_comparison
+            (not_keyword)
+            operator: (unary_operator)))))))
+
+=================
+Assign Regex
+=================
+
+let x = /[a-zA-Z]/
+
+---
+
+(guard
+  (assignment
+    name: (variable_name)
+    value: (literal_value
+      (regex
+        pattern: (regex_pattern)))))
+
+================
+Assign String
+================
+
+let x = 'test'
+
+---
+
+(guard
+  (assignment
+    name: (variable_name)
+    value: (literal_value
+      (string))))
+
+================
+Assign with some
+================
+
+let x = some Test.*[x == 1]
+
+---
+
+(guard
+  (assignment
+    name: (variable_name)
+    value: (query
+      (some)
+      (access
+        (property
+          (identifier))
+        (traversal
+          (wildcard))
+        (filter
+          left: (access
+            (property
+              (identifier)))
+          comparison: (binary_comparison
+            operator: (binary_operator)
+            right: (literal_value
+              (integer))))))))
+
+================
+Assign this
+================
+
+let x = this
+
+---
+
+(guard
+  (assignment
+    name: (variable_name)
+    value: (query
+      (access
+        (this)))))
+
+==================
+Assign Boolean
+==================
+
+let x = true
+let x = True
+let x = false
+let x = False
+
+---
+
+(guard
+  (assignment
+    name: (variable_name)
+    value: (literal_value
+      (bool)))
+  (assignment
+    name: (variable_name)
+    value: (literal_value
+      (bool)))
+  (assignment
+    name: (variable_name)
+    value: (literal_value
+      (bool)))
+  (assignment
+    name: (variable_name)
+    value: (literal_value
+      (bool))))
+
+==================
+Assign List
+==================
+
+let x = ['test']
+let y = [
+  1
+]
+
+---
+
+(guard
+  (assignment
+    name: (variable_name)
+    value: (literal_value
+      (list
+        item: (literal_value
+          (string)))))
+  (assignment
+    name: (variable_name)
+    value: (literal_value
+      (list
+        item: (literal_value
+          (integer))))))
+
+==================
+Assign Map
+==================
+
+let x = {
+    'a': 1,
+    'b': true,
+    'c': ["1"],
+    'd': {"x": 1},
+}
+
+let x = {
+    # test comment
+    'a': 1, # test
+}
+
+---
+
+(guard
+  (assignment
+    name: (variable_name)
+    value: (literal_value
+      (map
+        key: (string)
+        value: (integer)
+        key: (string)
+        value: (bool)
+        key: (string)
+        value: (list
+          item: (literal_value
+            (string)))
+        key: (string)
+        value: (map
+          key: (string)
+          value: (integer)))))
+  (assignment
+    name: (variable_name)
+    value: (literal_value
+      (map
+        (comment)
+        key: (string)
+        value: (integer)
+        (comment)))))
+
+==================
+Assign Function Call
+==================
+
+let x = count([1])
+let x = count(%test)
+
+---
+
+(guard
+  (assignment
+    name: (variable_name)
+    value: (function_call
+      name: (identifier)
+      argument: (literal_value
+        (list
+          item: (literal_value
+            (integer))))))
+  (assignment
+    name: (variable_name)
+    value: (function_call
+      name: (identifier)
+      argument: (variable_reference))))

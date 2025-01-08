@@ -1,0 +1,81 @@
+===
+Python Runtime Check
+===
+let python_lambda_functions = Resources.*[
+    Type == 'AWS::Lambda::Function'
+    Properties.Runtime == /python/
+]
+
+rule PYTHON_LAMBDA_FUNCTIONS_RUNTIME_IN_SUPPORT when %python_lambda_functions !empty {
+  %python_lambda_functions.Properties.Runtime not in [
+      "python3.6",
+      "python3.7",
+      "python3.8"
+  ]
+  <<
+    Violation: Python Runtime is End Of Life and Unsupported
+    Rationale: Unsupported runtimes will become insecure
+  >>
+}
+---
+
+(guard
+  (assignment
+    name: (variable_name)
+    value: (query
+      (access
+        (property
+          (identifier))
+        (traversal
+          (wildcard))
+        (filter
+          left: (access
+            (property
+              (identifier)))
+          comparison: (binary_comparison
+            operator: (binary_operator)
+            right: (literal_value
+              (string)))
+          left: (access
+            (property
+              (identifier))
+            (traversal
+              (property
+                (identifier))))
+          comparison: (binary_comparison
+            operator: (binary_operator)
+            right: (literal_value
+              (regex
+                pattern: (regex_pattern))))))))
+  (named_rule_block
+    name: (variable_name)
+    condition: (when_expression
+      (clause
+        left: (query
+          (access
+            (variable_reference)))
+        comparison: (unary_comparison
+          (not_keyword)
+          operator: (unary_operator))))
+    (clause
+      left: (query
+        (access
+          (variable_reference)
+          (traversal
+            (property
+              (identifier)))
+          (traversal
+            (property
+              (identifier)))))
+      comparison: (binary_comparison
+        (not_keyword)
+        operator: (binary_operator)
+        right: (literal_value
+          (list
+            item: (literal_value
+              (string))
+            item: (literal_value
+              (string))
+            item: (literal_value
+              (string)))))
+      message: (custom_message))))

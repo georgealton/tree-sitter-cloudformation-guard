@@ -1,0 +1,38 @@
+====================
+Empty Loop
+====================
+
+%a[*] {
+}
+
+---
+
+(guard
+  (query_block
+    (query
+      (access
+        (variable_reference)
+        (filter
+          (wildcard))))))
+
+====================
+Loop With Assignment
+====================
+
+%a[*] {
+    let x = 1
+}
+
+---
+
+(guard
+  (query_block
+    (query
+      (access
+        (variable_reference)
+        (filter
+          (wildcard))))
+    (assignment
+      name: (variable_name)
+      value: (literal_value
+        (integer)))))

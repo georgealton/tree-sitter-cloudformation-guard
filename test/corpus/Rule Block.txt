@@ -1,0 +1,219 @@
+==================
+Empty Rule Block
+==================
+
+rule test {
+}
+
+---
+
+(guard
+  (named_rule_block
+    name: (variable_name)))
+
+==================
+Parametrized Rule Block
+==================
+
+rule test(test) {
+}
+
+---
+
+(guard
+  (named_rule_block
+    name: (variable_name)
+    parameters: (parameters
+      parameter: (identifier))))
+
+====================
+Rule With Assignment
+====================
+
+rule test {
+    let x = 1
+}
+
+---
+
+(guard
+  (named_rule_block
+    name: (variable_name)
+    (assignment
+      name: (variable_name)
+      value: (literal_value
+        (integer)))))
+
+====================
+Rule With Loop
+====================
+
+rule test {
+    %test[*] {
+    }
+}
+
+---
+
+(guard
+  (named_rule_block
+    name: (variable_name)
+    (query_block
+      (query
+        (access
+          (variable_reference)
+          (filter
+            (wildcard)))))))
+
+====================
+Rule With When
+====================
+
+rule test when %a == 1 {
+}
+
+---
+
+(guard
+  (named_rule_block
+    name: (variable_name)
+    condition: (when_expression
+      (clause
+        left: (query
+          (access
+            (variable_reference)))
+        comparison: (binary_comparison
+          operator: (binary_operator)
+          right: (literal_value
+            (integer)))))))
+
+==================
+Rule With Clause
+==================
+
+rule test {
+    Test.A !empty
+}
+
+---
+
+(guard
+  (named_rule_block
+    name: (variable_name)
+    (clause
+      left: (query
+        (access
+          (property
+            (identifier))
+          (traversal
+            (property
+              (identifier)))))
+      comparison: (unary_comparison
+        (not_keyword)
+        operator: (unary_operator)))))
+
+==================
+Rule With One Line Custom Message
+==================
+
+rule test {
+    Test.A !empty << Test >>
+}
+
+---
+
+(guard
+  (named_rule_block
+    name: (variable_name)
+    (clause
+      left: (query
+        (access
+          (property
+            (identifier))
+          (traversal
+            (property
+              (identifier)))))
+      comparison: (unary_comparison
+        (not_keyword)
+        operator: (unary_operator))
+      message: (custom_message))))
+
+==================
+Rule With Query Block
+==================
+
+rule test {
+    Resources.* {
+    }
+}
+
+---
+
+(guard
+  (named_rule_block
+    name: (variable_name)
+    (query_block
+      (query
+        (access
+          (property
+            (identifier))
+          (traversal
+            (wildcard)))))))
+
+==================
+Rule With Some
+==================
+
+rule test {
+    some Test.*.x == 1
+}
+
+---
+
+(guard
+  (named_rule_block
+    name: (variable_name)
+    (clause
+      left: (query
+        (some)
+        (access
+          (property
+            (identifier))
+          (traversal
+            (wildcard))
+          (traversal
+            (property
+              (identifier)))))
+      comparison: (binary_comparison
+        operator: (binary_operator)
+        right: (literal_value
+          (integer))))))
+
+==================
+Rule With Rule Reference
+==================
+
+rule test {
+    test or << message >> # comment
+    test << message >> # comment
+    test or test_b or << message >> # comment
+    test or
+    test
+    test
+    test(test_parameter, test_parameter2) or test(1) or
+    test
+}
+
+---
+
+(guard
+  (named_rule_block
+    name: (variable_name)
+    (rule_clause)
+    (rule_clause)
+    (rule_clause)
+    (rule_clause)
+    (rule_clause)
+    (rule_clause)
+    (rule_clause)
+    (rule_clause)))

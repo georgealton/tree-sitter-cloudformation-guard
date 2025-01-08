@@ -1,0 +1,15 @@
+name: acceptance
+on: [push]
+
+jobs:
+  test:
+    env:
+      GH_TOKEN: ${{ github.token }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          gh release download --repo tree-sitter/tree-sitter --output - --pattern "*linux-x64.gz" | gunzip -d > tree-sitter
+          chmod +x tree-sitter
+      - run: ./tree-sitter test
+        timeout-minutes: 1

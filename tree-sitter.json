@@ -1,0 +1,40 @@
+{
+  "grammars": [
+    {
+      "name": "guard",
+      "path": ".",
+      "camelcase": "Guard",
+      "highlights": [
+        "queries/highlights.scm"
+      ],
+      "scope": "source.guard",
+      "file-types": [
+        "guard"
+      ],
+      "injection-regex": "^guard$"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "CloudFormation Guard",
+    "authors": [
+      {
+        "name": "George Alton",
+        "email": "georgealton@gmail.com",
+        "url": "https://georgealton.com/"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/tree-sitter/tree-sitter-guard"
+    }
+  },
+  "bindings": {
+    "c": true,
+    "go": true,
+    "node": true,
+    "python": true,
+    "rust": true,
+    "swift": true
+  }
+}

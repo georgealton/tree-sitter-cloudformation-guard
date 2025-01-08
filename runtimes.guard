@@ -1,0 +1,17 @@
+# Guard Rule to find outdated Lambda Python Versions 
+let python_lambda_functions = Resources.*[
+    Type == 'AWS::Lambda::Function'
+    Properties.Runtime == /python/
+]
+
+rule PYTHON_LAMBDA_FUNCTIONS_RUNTIME_IN_SUPPORT(x, y) when %python_lambda_functions !empty {
+  %python_lambda_functions.Properties.Runtime not in [
+      "python3.6",
+      "python3.7",
+      "python3.8"
+  ]
+  <<
+    Violation: Python Runtime is End Of Life and Unsupported
+    Rationale: Unsupported runtimes will become insecure
+  >>
+}
