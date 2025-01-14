@@ -70,6 +70,7 @@ Comment in Loop
 ===
 %a[*] {
 # Test
+    let x = 1
 }
 ---
 
@@ -80,4 +81,8 @@ Comment in Loop
         (variable_reference)
         (filter
           (wildcard))))
-    (comment)))
+    (comment)
+    (assignment
+      name: (variable_name)
+      value: (literal_value
+        (integer)))))

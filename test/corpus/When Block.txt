@@ -26,7 +26,15 @@ when %properties.b == 2 {
 When with Rule Clause
 ===
 
-when asdf {
+when xy
+asdf # some comment
+test1 or test #comment
+test or 
+cat
+dog << message >> or # comment
+tree(Propeties, y)
+not house
+{
 }
 
 ---
@@ -34,9 +42,35 @@ when asdf {
 (guard
   (when_block
     (when_expression
-        (rule_name)
-        (or_term)
-        (rule_name))))
+      (rule_clause
+        name: (variable_name))
+      (rule_clause
+        name: (variable_name))
+      (comment)
+      (rule_clause
+        name: (variable_name))
+      (or_term)
+      (rule_clause
+        name: (variable_name))
+      (comment)
+      (rule_clause
+        name: (variable_name))
+      (or_term)
+      (rule_clause
+        name: (variable_name))
+      (rule_clause
+        name: (variable_name)
+        message: (custom_message))
+      (or_term)
+      (comment)
+      (rule_clause
+        name: (variable_name)
+        (parameters
+          parameter: (identifier)
+          parameter: (identifier)))
+      (rule_clause
+        (not_keyword)
+        name: (variable_name)))))
 
 ===
 When Multiple Clauses

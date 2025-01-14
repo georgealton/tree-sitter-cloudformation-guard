@@ -144,18 +144,15 @@ module.exports = grammar({
       field("message", optional($.custom_message)),
     ),
 
-    _real_rule_clause: $ => seq(
-        optional($.not_keyword), 
-        $.rule_name, 
-        optional($.parameters),
-        optional($.custom_message),
-      ), 
+    rule_clause: $ => seq(
+      optional($.not_keyword), 
+      field("name", alias($.rule_name, $.variable_name)),
+      optional($.parameters),
+      field("message", optional($.custom_message)),
+    ), 
 
     _clauses: $ => seq(
-      choice(
-        $.clause,
-        $._real_rule_clause,
-      ),
+      choice($.clause, $.rule_clause), 
       optional($.or_term)
     ),
 
@@ -194,24 +191,24 @@ module.exports = grammar({
     query_block: $ => seq(
       $.query,
       $._whitespace,
-      "{",
-      repeat(choice($.assignment, $._block, $._clauses)),
-      "}",
+      "{", repeat(choice($.assignment, $._block, $._clauses)), "}",
     ),
 
     when_block: $ => seq(
       $.when_expression,
-      "{",
-      repeat(choice($.assignment, $._block, $._clauses)),
-      "}",
+      "{", repeat(choice($.assignment, $._block, $._clauses)), "}",
+    ),
+
+    _rule_declaration: $ => seq(
+      "rule",
+      field("name", $.variable_name),
+      field("parameters", optional($.parameters)),
     ),
 
     named_rule_block: $ => seq(
       $._rule_declaration,
       field("condition", optional($.when_expression)),
-      "{",
-      repeat(choice($.assignment, $._block, $._clauses, $.rule_clause)),
-      "}"
+      "{", repeat(choice($.assignment, $._block, $._clauses)), "}"
     ),
 
     _block: $ => choice($.when_block, $.query_block),
@@ -245,52 +242,5 @@ module.exports = grammar({
     comment: _ => token(seq('#', repeat(/./), /\r?\n/)),
     _whitespace: _ => /\s+/,
     identifier: _ => /[a-zA-Z\d_-]+/,
-    _rule: _ => token("rule"),
-    _rule_declaration: $ => seq(
-      $._rule,
-      field("name", $.variable_name),
-      field("parameters", optional($.parameters)),
-    ),
-    //  rule_clause: $ => 
-    //      seq(
-    //        optional($.not_keyword),
-    //        seq($.variable_name, optional($.parameters)),
-    //        $._whitespace,
-    //        repeat(
-    //          seq(
-    //            $.or_term, 
-    //            seq($.variable_name, optional($.parameters)
-    //            )
-    //          )
-    //        ),
-    //        optional($.custom_message),
-    //        choice(
-    //         optional($.comment),
-    //         /\r?\n/
-    //       )
-    //  ),
-
-    // Regex workaround as we can't match the other tokens used within
-    // the a rule clause. Preventing matching the or keyword, custom messages
-    // and comments...
-    // (likely skill issue, may need to look at a custom scanner)
-    //
-    // A Rule Clause should only match with a Rule Block. But it looks like a
-    // query to tree sitter as the rule name matches the idenfitier. But we
-    // shouldn't match because we're not doing a comparison or start a loop or
-    // when, or query block...
-    //
-    // There is a hack in the VariableName CaptureGroup to avoid matching the `or`
-    // keyword variable names must be longer than 3 or characters...in the real
-    // world how many 2 letter rule names are there...
-    //
-    // rule_a << message >> # comment
-    // rule_a # comment
-    // rule_a or rule_b #comment
-    // rule_a(parameter) or rule_b #comment
-    rule_clause: $ => choice(
-      /(?<VariableName>[a-zA-Z]+[A-Za-z0-9_]{2,}(?<Parameters>\((.*,?)*\))?[ \t]*)+(?<CustomMessage><<.*>>)?[ \t]*(?<Comment>#.*)?\r?\n/,
-      /(?<VariableName>[a-zA-Z]+[A-Za-z0-9_]{2,}(?<Parameters>\((.*,?)*\))?[ \t]+or[ \t]*)+([A-Za-z0-9]+[ \t]*)?(?<CustomMessage><<.*>>)?[ \t]*(?<Comment>#.*)?\r?\n/,
-    ),
   },
 });

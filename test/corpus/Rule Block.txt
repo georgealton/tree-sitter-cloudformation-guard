@@ -194,14 +194,11 @@ Rule With Rule Reference
 ==================
 
 rule test {
-    test or << message >> # comment
+    test
+    test # comment
     test << message >> # comment
-    test or test_b or << message >> # comment
-    test or
-    test
-    test
-    test(test_parameter, test_parameter2) or test(1) or
-    test
+    test or # comment
+    test(test_parameter,test_parameter2) or test(1) or
 }
 
 ---
@@ -209,11 +206,27 @@ rule test {
 (guard
   (named_rule_block
     name: (variable_name)
-    (rule_clause)
-    (rule_clause)
-    (rule_clause)
-    (rule_clause)
-    (rule_clause)
-    (rule_clause)
-    (rule_clause)
-    (rule_clause)))
+    (rule_clause
+      name: (variable_name))
+    (rule_clause
+      name: (variable_name))
+    (comment)
+    (rule_clause
+      name: (variable_name)
+      message: (custom_message))
+    (comment)
+    (rule_clause
+      name: (variable_name))
+    (or_term)
+    (comment)
+    (rule_clause
+      name: (variable_name)
+      (parameters
+        parameter: (identifier)
+        parameter: (identifier)))
+    (or_term)
+    (rule_clause
+      name: (variable_name)
+      (parameters
+        parameter: (identifier)))
+    (or_term)))

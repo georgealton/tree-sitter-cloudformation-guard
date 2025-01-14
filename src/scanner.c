@@ -7,7 +7,7 @@ enum TokenType {
   ERROR_SENTINEL
 };
 
-void * tree_sitter_guard_external_scanner_create() { printf("hi"); return NULL; }
+void * tree_sitter_guard_external_scanner_create() { return NULL; }
 void tree_sitter_guard_external_scanner_destroy(void *p) {}
 void tree_sitter_guard_external_scanner_reset(void *p) {}
 
@@ -16,6 +16,81 @@ void tree_sitter_guard_external_scanner_deserialize(void *p, const char *b, unsi
 
 static inline void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
 static inline void take(TSLexer *lexer) { lexer->advance(lexer, false); }
+
+static inline bool is_or_keyword(
+    TSLexer *lexer
+){
+   if (lexer->lookahead == 'o') {
+        take(lexer);
+        if (lexer->lookahead == 'r') {
+           take(lexer);
+           if (iswspace(lexer->lookahead)) {
+               return true;
+           }
+        }
+   }
+   return false;
+}
+
+static inline bool scan_rule_name(
+    TSLexer *lexer
+) {
+    
+       while (iswspace(lexer->lookahead)) { skip(lexer); } 
+
+       // extract rule_name
+       // must start with alpha
+       // can be alphanumeric after
+       if (!iswalpha(lexer->lookahead)) { return false; }
+       while(iswalnum(lexer->lookahead) || lexer->lookahead == '_') { 
+           if(is_or_keyword(lexer)) { return false; }
+           take(lexer); 
+       }
+
+       if (lexer->lookahead == '\n'){
+         lexer->mark_end(lexer);
+         lexer->result_symbol = RULE_NAME;
+         return true;
+       }
+
+       while (iswspace(lexer->lookahead)) { skip(lexer); } 
+
+       switch (lexer->lookahead) {
+        case 'o':
+            lexer->mark_end(lexer);
+            take(lexer);
+            if (lexer->lookahead == 'r') {
+                take(lexer);
+
+                if (iswspace(lexer->lookahead)){
+                   lexer->result_symbol = RULE_NAME;
+                   return true;
+                }
+            }
+            break;
+
+        // block start
+        case '#':
+            lexer->mark_end(lexer);
+            return true;
+
+        // parameters start
+        case '(':
+        // comment start
+        case '{':
+        // message start
+        case '<':
+        // newline
+        case '\r':
+        case '\n':
+            lexer->mark_end(lexer);
+            lexer->result_symbol = RULE_NAME;
+            return true;
+    }
+    
+    // hitting any other char means we're not a rule_name
+    return false;
+}
 
 
 bool tree_sitter_guard_external_scanner_scan(
@@ -27,45 +102,9 @@ bool tree_sitter_guard_external_scanner_scan(
            return false;
        }
 
-       while (iswspace(lexer->lookahead)) {
-           skip(lexer);
-       } 
-
-       while(iswalpha(lexer->lookahead) || lexer->lookahead == '_') {
-           take(lexer);
+       if (valid_symbols[RULE_NAME]){
+           return scan_rule_name(lexer);
        }
-
-       while (iswspace(lexer->lookahead)) {
-           skip(lexer);
-       } 
-
-
-       switch (lexer->lookahead) {
-            case 'o':
-                lexer->mark_end(lexer);
-                take(lexer);
-                if (lexer->lookahead == 'r') {
-                    take(lexer);
-
-                    if (iswspace(lexer->lookahead)){
-                       lexer->result_symbol = RULE_NAME;
-                        return true;
-                    }
-                }
-
-            case '{':
-                lexer->mark_end(lexer);
-                lexer->result_symbol = RULE_NAME;
-                return true;
-            case '<':
-                lexer->mark_end(lexer);
-                lexer->result_symbol = RULE_NAME;
-                return true;
-            case '\n':
-                lexer->mark_end(lexer);
-                lexer->result_symbol = RULE_NAME;
-                return true;
-    }
 
     return false; 
 }

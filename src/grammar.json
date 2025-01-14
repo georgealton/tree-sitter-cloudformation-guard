@@ -676,7 +676,7 @@
         }
       ]
     },
-    "_real_rule_clause": {
+    "rule_clause": {
       "type": "SEQ",
       "members": [
         {
@@ -692,8 +692,17 @@
           ]
         },
         {
-          "type": "SYMBOL",
-          "name": "rule_name"
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "rule_name"
+            },
+            "named": true,
+            "value": "variable_name"
+          }
         },
         {
           "type": "CHOICE",
@@ -708,16 +717,20 @@
           ]
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "custom_message"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
+          "type": "FIELD",
+          "name": "message",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "custom_message"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
         }
       ]
     },
@@ -733,7 +746,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "_real_rule_clause"
+              "name": "rule_clause"
             }
           ]
         },
@@ -1047,6 +1060,39 @@
         }
       ]
     },
+    "_rule_declaration": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "rule"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "variable_name"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "parameters",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "parameters"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        }
+      ]
+    },
     "named_rule_block": {
       "type": "SEQ",
       "members": [
@@ -1090,10 +1136,6 @@
               {
                 "type": "SYMBOL",
                 "name": "_clauses"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "rule_clause"
               }
             ]
           }
@@ -1434,59 +1476,6 @@
     "identifier": {
       "type": "PATTERN",
       "value": "[a-zA-Z\\d_-]+"
-    },
-    "_rule": {
-      "type": "TOKEN",
-      "content": {
-        "type": "STRING",
-        "value": "rule"
-      }
-    },
-    "_rule_declaration": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_rule"
-        },
-        {
-          "type": "FIELD",
-          "name": "name",
-          "content": {
-            "type": "SYMBOL",
-            "name": "variable_name"
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "parameters",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "parameters"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          }
-        }
-      ]
-    },
-    "rule_clause": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "PATTERN",
-          "value": "(?<VariableName>[a-zA-Z]+[A-Za-z0-9_]{2,}(?<Parameters>\\((.*,?)*\\))?[ \\t]*)+(?<CustomMessage><<.*>>)?[ \\t]*(?<Comment>#.*)?\\r?\\n"
-        },
-        {
-          "type": "PATTERN",
-          "value": "(?<VariableName>[a-zA-Z]+[A-Za-z0-9_]{2,}(?<Parameters>\\((.*,?)*\\))?[ \\t]+or[ \\t]*)+([A-Za-z0-9]+[ \\t]*)?(?<CustomMessage><<.*>>)?[ \\t]*(?<Comment>#.*)?\\r?\\n"
-        }
-      ]
     }
   },
   "extras": [

@@ -10,6 +10,7 @@ rule PYTHON_LAMBDA_FUNCTIONS_RUNTIME_IN_SUPPORT(x, y) when %python_lambda_functi
       "python3.7",
       "python3.8"
   ]
+  NNNN
   <<
     Violation: Python Runtime is End Of Life and Unsupported
     Rationale: Unsupported runtimes will become insecure
