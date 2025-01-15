@@ -205,6 +205,14 @@
       "required": false,
       "types": [
         {
+          "type": "access",
+          "named": true
+        },
+        {
+          "type": "clause",
+          "named": true
+        },
+        {
           "type": "integer",
           "named": true
         },

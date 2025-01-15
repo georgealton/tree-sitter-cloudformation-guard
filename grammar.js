@@ -145,21 +145,31 @@ module.exports = grammar({
     ),
 
     rule_clause: $ => seq(
-      optional($.not_keyword), 
+      optional($.not_keyword),
       field("name", alias($.rule_name, $.variable_name)),
       optional($.parameters),
       field("message", optional($.custom_message)),
-    ), 
+    ),
 
     _clauses: $ => seq(
-      choice($.clause, $.rule_clause), 
+      choice($.clause, $.rule_clause),
       optional($.or_term)
     ),
 
     _filter_expression: $ => seq(
       optional($.some),
-      field("left", choice($.access, $.string)),
-      field("comparison", choice($.unary_comparison, $.binary_comparison)),
+      choice(
+        seq(
+          field("left", choice($.access, $.string)),
+          field("comparison", choice($.unary_comparison, $.binary_comparison)),
+        ),
+        seq(
+          $.access,
+          "{",
+          repeat($.clause,),
+          "}"
+        )
+      )
     ),
 
     unary_comparison: $ => seq(
@@ -221,12 +231,12 @@ module.exports = grammar({
     custom_message: _ => seq("<<", field("body", repeat(/./)), ">>"),
     binary_operator: _ => choice(">=", "<=", ">", "<", "in", "IN", "==", "!=",),
     unary_operator: _ => choice(
-      "exists",    "EXISTS",
-      "empty",     "EMPTY",
+      "exists", "EXISTS",
+      "empty", "EMPTY",
       "is_string", "IS_STRING",
-      "is_list",   "IS_LIST",
+      "is_list", "IS_LIST",
       "is_struct", "IS_STRUCT",
-      "is_null",   "IS_NULL",
+      "is_null", "IS_NULL",
     ),
     variable_name: _ => token(prec(-1, /[a-zA-Z]+[a-zA-Z0-9_]*/)),
     or_term: _ => choice("or", "OR", "|OR|"),
