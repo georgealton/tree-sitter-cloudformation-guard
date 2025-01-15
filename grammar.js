@@ -206,7 +206,7 @@ module.exports = grammar({
 
     when_block: $ => seq(
       $.when_expression,
-      "{", repeat(choice($.assignment, $._block, $._clauses)), "}",
+      "{", repeat(choice($.assignment, $._block, seq($.clause, optional($.or_term)))), "}",
     ),
 
     _rule_declaration: $ => seq(

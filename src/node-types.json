@@ -846,10 +846,6 @@
           "named": true
         },
         {
-          "type": "rule_clause",
-          "named": true
-        },
-        {
           "type": "when_block",
           "named": true
         },

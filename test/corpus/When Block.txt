@@ -328,3 +328,44 @@ when %properties.b == 2 {
         operator: (binary_operator)
         right: (literal_value
           (integer))))))
+
+===
+When Query Block
+===
+
+when %properties.b == 2 {
+    Properties {
+        X == 1
+    }
+}
+
+---
+
+(guard
+  (when_block
+    (when_expression
+      (clause
+        left: (query
+          (access
+            (variable_reference)
+            (traversal
+              (property
+                (identifier)))))
+        comparison: (binary_comparison
+          operator: (binary_operator)
+          right: (literal_value
+            (integer)))))
+    (query_block
+      (query
+        (access
+          (property
+            (identifier))))
+      (clause
+        left: (query
+          (access
+            (property
+              (identifier))))
+        comparison: (binary_comparison
+          operator: (binary_operator)
+          right: (literal_value
+            (integer)))))))
