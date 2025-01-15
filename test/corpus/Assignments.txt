@@ -59,6 +59,7 @@ let ecs_tasks = Resources.*[
           comparison: (unary_comparison
             (not_keyword)
             operator: (unary_operator)))))))
+
 ===
 Assign Complex Query
 ===
@@ -71,10 +72,13 @@ let only_prod_ddb = %ddb[
 ]
 ---
 
-  (guard
-      (assignment
-        (variable_name)
-          (variable_reference)
+(guard
+  (assignment
+    (variable_name)
+    (query
+      (access
+        (variable_reference)
+        (filter
           (some)
           (access
             (property
@@ -84,20 +88,26 @@ let only_prod_ddb = %ddb[
                 (identifier)))
             (filter
               (wildcard)))
-          (identifier))
-        (literal_value
-          (regex
-            (regex_pattern))))
-      (clause
-        (query
-          (access
-            (property
-              (identifier))))
-        (binary_comparison
-          (binary_operator)
-          (literal_value
-            (regex
-              (regex_pattern)))))
+          (clause
+            (query
+              (access
+                (property
+                  (identifier))))
+            (binary_comparison
+              (binary_operator)
+              (literal_value
+                (regex
+                  (regex_pattern)))))
+          (clause
+            (query
+              (access
+                (property
+                  (identifier))))
+            (binary_comparison
+              (binary_operator)
+              (literal_value
+                (regex
+                  (regex_pattern))))))))))
 
 =================
 Assign Regex
