@@ -8,8 +8,40 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Checkout AWS Guard Rules Registry
+        uses: actions/checkout@v4
+        with:
+          repository: aws-cloudformation/aws-guard-rules-registry
+          path: aws-guard-rules
+          sparse-checkout: |
+            rules/aws/
+
+      - name: Checkout AWS Guard Examples
+        uses: actions/checkout@v4
+        with:
+          repository: aws-cloudformation/cloudformation-guard
+          path: cloudformation-guard
+          sparse-checkout: |
+            guard-examples/
+
       - run: |
-          gh release download --repo tree-sitter/tree-sitter --output - --pattern "*linux-x64.gz" | gunzip -d > tree-sitter
+          gh release download --repo tree-sitter/tree-sitter --output - --pattern "*linux-x64.gz" | gunzip -d > tree-sitter && \
           chmod +x tree-sitter
       - run: ./tree-sitter test
         timeout-minutes: 1
+      
+      - run: ./tree-sitter init-config
+
+      - timeout-minutes: 1
+        run: |
+          for rule in aws-guard-rules/rules/aws/**/*.guard; do 
+            ./tree-sitter parse --quiet "$rule" | tee -a $GITHUB_STEP_SUMMARY; 
+          done | wc -l
+
+      - timeout-minutes: 1
+        run: |
+          for rule in cloudformation-guard/guard-examples/**/*.guard; do 
+          ./tree-sitter parse --quiet "$rule" | tee -a $GITHUB_STEP_SUMMARY; 
+          done | wc -l
+
