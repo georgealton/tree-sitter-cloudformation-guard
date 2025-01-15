@@ -280,3 +280,63 @@ Query With Clause
         operator: (binary_operator)
         right: (literal_value
           (integer))))))
+
+===
+Query Filter 
+===
+
+%test.x[
+    Properties {
+        some Tags[*].Key == /Prod/
+    }
+] {
+    Properties {
+        X in %test
+    }
+}
+
+----
+
+(guard
+  (query_block
+    (query
+      (access
+        (variable_reference)
+        (traversal
+          (property
+            (identifier)))
+        (filter
+          (access
+            (property
+              (identifier)))
+          (clause
+            (query
+              (some)
+              (access
+                (property
+                  (identifier))
+                (filter
+                  (wildcard))
+                (traversal
+                  (property
+                    (identifier)))))
+            (binary_comparison
+              (binary_operator)
+              (literal_value
+                (regex
+                  (regex_pattern))))))))
+    (query_block
+      (query
+        (access
+          (property
+            (identifier))))
+      (clause
+        (query
+          (access
+            (property
+              (identifier))))
+        (binary_comparison
+          (binary_operator)
+          (query
+            (access
+              (variable_reference))))))))
