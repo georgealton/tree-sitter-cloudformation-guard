@@ -66,7 +66,9 @@ Assign Complex Query
 
 let only_prod_ddb = %ddb[
     some Properties.Tags[*] {
+        Test == /Test/
         Key == /PROD/
+        or
         Value == /^App/
     }
 ]
@@ -98,6 +100,17 @@ let only_prod_ddb = %ddb[
               (literal_value
                 (regex
                   (regex_pattern)))))
+              (clause
+                (query
+                  (access
+                    (property
+                      (identifier))))
+                (binary_comparison
+                  (binary_operator)
+                  (literal_value
+                    (regex
+                      (regex_pattern)))))
+          (or_term)
           (clause
             (query
               (access

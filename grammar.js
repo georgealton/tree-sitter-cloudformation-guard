@@ -166,7 +166,7 @@ module.exports = grammar({
         seq(
           $.access,
           "{",
-          repeat($.clause,),
+          repeat(seq($.clause, optional($.or_term))),
           "}"
         )
       )
