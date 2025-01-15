@@ -100,16 +100,16 @@ let only_prod_ddb = %ddb[
               (literal_value
                 (regex
                   (regex_pattern)))))
-              (clause
-                (query
-                  (access
-                    (property
-                      (identifier))))
-                (binary_comparison
-                  (binary_operator)
-                  (literal_value
-                    (regex
-                      (regex_pattern)))))
+          (clause
+            (query
+              (access
+                (property
+                  (identifier))))
+            (binary_comparison
+              (binary_operator)
+              (literal_value
+                (regex
+                  (regex_pattern)))))
           (or_term)
           (clause
             (query
@@ -251,6 +251,7 @@ let y = [
 Assign Map
 ==================
 
+let x = { Key: "Value" }
 let x = {
     'a': 1,
     'b': true,
@@ -266,6 +267,12 @@ let x = {
 ---
 
 (guard
+  (assignment
+    name: (variable_name)
+    value: (literal_value
+      (map
+        key: (identifier)
+        value: (string))))
   (assignment
     name: (variable_name)
     value: (literal_value

@@ -35,7 +35,7 @@ module.exports = grammar({
       "{",
       repeat1(
         seq(
-          field("key", $.string),
+          field("key", choice($.identifier, $.string)),
           ":",
           field("value", choice($._primitive, $.map, $.list)),
           optional(","),
