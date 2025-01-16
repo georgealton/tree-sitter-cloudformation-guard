@@ -72,6 +72,17 @@ let only_prod_ddb = %ddb[
         Value == /^App/
     }
 ]
+
+let ssl_secure_bucket_policies = %s3_buckets_policies_ssl_requests_only[
+  Properties.PolicyDocument {
+    some Statement[*] {
+      Effect == 'Deny'
+      Condition {
+        Bool.'aws:SecureTransport' == false
+      }
+    }
+  }
+]
 ---
 
 (guard
@@ -120,7 +131,53 @@ let only_prod_ddb = %ddb[
               (binary_operator)
               (literal_value
                 (regex
-                  (regex_pattern))))))))))
+                  (regex_pattern)))))))))
+  (assignment
+    (variable_name)
+    (query
+      (access
+        (variable_reference)
+        (filter
+          (access
+            (property
+              (identifier))
+            (traversal
+              (property
+                (identifier))))
+          (query_block
+            (query
+              (some)
+              (access
+                (property
+                  (identifier))
+                (filter
+                  (wildcard))))
+            (clause
+              (query
+                (access
+                  (property
+                    (identifier))))
+              (binary_comparison
+                (binary_operator)
+                (literal_value
+                  (string))))
+            (query_block
+              (query
+                (access
+                  (property
+                    (identifier))))
+              (clause
+                (query
+                  (access
+                    (property
+                      (identifier))
+                    (traversal
+                      (property
+                        (string)))))
+                (binary_comparison
+                  (binary_operator)
+                  (literal_value
+                    (bool)))))))))))
 
 =================
 Assign Regex
