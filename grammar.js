@@ -52,19 +52,15 @@ module.exports = grammar({
 
     function_call: $ => seq(
       field("name", $.identifier),
-      field("arguments", seq(
-        token.immediate("("),
-        repeat(field("argument",
-          seq(
-            choice(
-              $.literal_value,
-              $.variable_reference,
-              // $.query,
-            ),
-            optional(",")))
+      field("arguments",
+        seq(
+          token.immediate("("),
+          choice(
+            field("argument", choice($.literal_value, $.variable_reference, $.query)),
+            repeat1(field("argument", seq(choice($.literal_value, $.variable_reference, $.query), ","))),
+          ),
+          ")",
         ),
-        ")",
-      ),
       ),
     ),
 
