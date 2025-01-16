@@ -177,7 +177,21 @@ let x = T [
           (integer))
         (traversal
           (property
-            (identifier)))))))
+            (identifier))))))
+  (assignment
+    name: (variable_name)
+    value: (query
+      (access
+        (property
+          (identifier))
+        (filter
+          left: (access
+            (property
+              (identifier)))
+          comparison: (binary_comparison
+            operator: (binary_operator)
+            right: (literal_value
+              (integer))))))))
 
 ===
 Empty Query
