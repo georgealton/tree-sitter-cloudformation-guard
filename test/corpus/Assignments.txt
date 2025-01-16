@@ -370,25 +370,28 @@ let x = count(Properties.Statement[*])
     name: (variable_name)
     value: (function_call
       name: (identifier)
-      argument: (literal_value
-        (list
-          item: (literal_value
-            (integer))))))
+      arguments: (arguments
+        argument: (literal_value
+          (list
+            item: (literal_value
+              (integer)))))))
   (assignment
     name: (variable_name)
     value: (function_call
       name: (identifier)
-      argument: (variable_reference)))
+      arguments: (arguments
+        argument: (variable_reference))))
   (assignment
     name: (variable_name)
     value: (function_call
       name: (identifier)
-      argument: (query
-        (access
-          (property
-            (identifier))
-          (traversal
+      arguments: (arguments
+        argument: (query
+          (access
             (property
-              (identifier)))
-          (filter
-            (wildcard)))))))
+              (identifier))
+            (traversal
+              (property
+                (identifier)))
+            (filter
+              (wildcard))))))))

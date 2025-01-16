@@ -65,9 +65,15 @@ not house
       (comment)
       (rule_clause
         name: (variable_name)
-        (parameters
-          parameter: (identifier)
-          parameter: (identifier)))
+        (arguments
+          argument: (query
+            (access
+              (property
+                (identifier))))
+          argument: (query
+            (access
+              (property
+                (identifier))))))
       (rule_clause
         (not_keyword)
         name: (variable_name)))))

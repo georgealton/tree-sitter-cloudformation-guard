@@ -50,18 +50,32 @@ module.exports = grammar({
       ")"
     ),
 
+    arguments: $ => seq(
+      token.immediate("("),
+      choice(
+        field(
+          "argument",
+          choice($.literal_value, $.variable_reference, $.query)
+        ),
+
+        field(
+          "argument",
+          seq(
+            repeat1(
+              seq(
+                choice($.literal_value, $.variable_reference, $.query),
+                ",",)),
+            choice($.literal_value, $.variable_reference, $.query),
+          ),
+        )
+        ,
+      ),
+      ")",
+    ),
+
     function_call: $ => seq(
       field("name", $.identifier),
-      field("arguments",
-        seq(
-          token.immediate("("),
-          choice(
-            field("argument", choice($.literal_value, $.variable_reference, $.query)),
-            repeat1(field("argument", seq(choice($.literal_value, $.variable_reference, $.query), ","))),
-          ),
-          ")",
-        ),
-      ),
+      field("arguments", $.arguments),
     ),
 
     list: $ => seq(
@@ -143,7 +157,7 @@ module.exports = grammar({
     rule_clause: $ => seq(
       optional($.not_keyword),
       field("name", alias($.rule_name, $.variable_name)),
-      optional($.parameters),
+      optional($.arguments),
       field("message", optional($.custom_message)),
     ),
 

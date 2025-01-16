@@ -31,6 +31,34 @@
     }
   },
   {
+    "type": "arguments",
+    "named": true,
+    "fields": {
+      "argument": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": ",",
+            "named": false
+          },
+          {
+            "type": "literal_value",
+            "named": true
+          },
+          {
+            "type": "query",
+            "named": true
+          },
+          {
+            "type": "variable_reference",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "assignment",
     "named": true,
     "fields": {
@@ -239,54 +267,12 @@
     "type": "function_call",
     "named": true,
     "fields": {
-      "argument": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": ",",
-            "named": false
-          },
-          {
-            "type": "literal_value",
-            "named": true
-          },
-          {
-            "type": "query",
-            "named": true
-          },
-          {
-            "type": "variable_reference",
-            "named": true
-          }
-        ]
-      },
       "arguments": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
-          {
-            "type": ",",
-            "named": false
-          },
-          {
-            "type": "literal_value",
-            "named": true
-          },
-          {
-            "type": "query",
-            "named": true
-          },
-          {
-            "type": "variable_reference",
+            "type": "arguments",
             "named": true
           }
         ]
@@ -749,11 +735,11 @@
       "required": false,
       "types": [
         {
-          "type": "not_keyword",
+          "type": "arguments",
           "named": true
         },
         {
-          "type": "parameters",
+          "type": "not_keyword",
           "named": true
         }
       ]

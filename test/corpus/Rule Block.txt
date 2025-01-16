@@ -232,12 +232,19 @@ rule test {
     (comment)
     (rule_clause
       name: (variable_name)
-      (parameters
-        parameter: (identifier)
-        parameter: (identifier)))
+      (arguments
+        argument: (query
+          (access
+            (property
+              (identifier))))
+        argument: (query
+          (access
+            (property
+              (identifier))))))
     (or_term)
     (rule_clause
       name: (variable_name)
-      (parameters
-        parameter: (identifier)))
+      (arguments
+        argument: (literal_value
+          (integer))))
     (or_term)))
