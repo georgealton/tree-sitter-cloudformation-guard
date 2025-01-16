@@ -744,34 +744,38 @@
       ]
     },
     "_clauses": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "clause"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "rule_clause"
-            }
-          ]
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "or_term"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        }
-      ]
+      "type": "PREC_LEFT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "clause"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "rule_clause"
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "or_term"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      }
     },
     "_filter_expression": {
       "type": "SEQ",
@@ -1263,6 +1267,10 @@
         {
           "type": "SYMBOL",
           "name": "when_block"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "or_term"
         },
         {
           "type": "SYMBOL",
