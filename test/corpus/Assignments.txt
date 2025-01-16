@@ -87,8 +87,8 @@ let ssl_secure_bucket_policies = %s3_buckets_policies_ssl_requests_only[
 
 (guard
   (assignment
-    (variable_name)
-    (query
+    name: (variable_name)
+    value: (query
       (access
         (variable_reference)
         (filter
@@ -102,39 +102,39 @@ let ssl_secure_bucket_policies = %s3_buckets_policies_ssl_requests_only[
             (filter
               (wildcard)))
           (clause
-            (query
+            left: (query
               (access
                 (property
                   (identifier))))
-            (binary_comparison
-              (binary_operator)
-              (literal_value
+            comparison: (binary_comparison
+              operator: (binary_operator)
+              right: (literal_value
                 (regex
-                  (regex_pattern)))))
+                  pattern: (regex_pattern)))))
           (clause
-            (query
+            left: (query
               (access
                 (property
                   (identifier))))
-            (binary_comparison
-              (binary_operator)
-              (literal_value
+            comparison: (binary_comparison
+              operator: (binary_operator)
+              right: (literal_value
                 (regex
-                  (regex_pattern)))))
+                  pattern: (regex_pattern)))))
           (or_term)
           (clause
-            (query
+            left: (query
               (access
                 (property
                   (identifier))))
-            (binary_comparison
-              (binary_operator)
-              (literal_value
+            comparison: (binary_comparison
+              operator: (binary_operator)
+              right: (literal_value
                 (regex
-                  (regex_pattern)))))))))
+                  pattern: (regex_pattern)))))))))
   (assignment
-    (variable_name)
-    (query
+    name: (variable_name)
+    value: (query
       (access
         (variable_reference)
         (filter
@@ -153,13 +153,13 @@ let ssl_secure_bucket_policies = %s3_buckets_policies_ssl_requests_only[
                 (filter
                   (wildcard))))
             (clause
-              (query
+              left: (query
                 (access
                   (property
                     (identifier))))
-              (binary_comparison
-                (binary_operator)
-                (literal_value
+              comparison: (binary_comparison
+                operator: (binary_operator)
+                right: (literal_value
                   (string))))
             (query_block
               (query
@@ -167,16 +167,16 @@ let ssl_secure_bucket_policies = %s3_buckets_policies_ssl_requests_only[
                   (property
                     (identifier))))
               (clause
-                (query
+                left: (query
                   (access
                     (property
                       (identifier))
                     (traversal
                       (property
                         (string)))))
-                (binary_comparison
-                  (binary_operator)
-                  (literal_value
+                comparison: (binary_comparison
+                  operator: (binary_operator)
+                  right: (literal_value
                     (bool)))))))))))
 
 =================
