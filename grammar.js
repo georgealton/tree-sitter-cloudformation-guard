@@ -166,7 +166,12 @@ module.exports = grammar({
         seq(
           $.access,
           "{",
-          repeat(seq($.clause, optional($.or_term))),
+          repeat(choice(
+            $.query_block,
+            seq($.clause, optional($.or_term)
+            ),
+          ),
+          ),
           "}"
         )
       )

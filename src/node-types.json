@@ -221,6 +221,10 @@
           "named": true
         },
         {
+          "type": "query_block",
+          "named": true
+        },
+        {
           "type": "some",
           "named": true
         },
