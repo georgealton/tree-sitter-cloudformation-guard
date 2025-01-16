@@ -361,6 +361,7 @@ Assign Function Call
 
 let x = count([1])
 let x = count(%test)
+let x = count(Properties.Statement[*])
 
 ---
 
@@ -377,4 +378,17 @@ let x = count(%test)
     name: (variable_name)
     value: (function_call
       name: (identifier)
-      argument: (variable_reference))))
+      argument: (variable_reference)))
+  (assignment
+    name: (variable_name)
+    value: (function_call
+      name: (identifier)
+      argument: (query
+        (access
+          (property
+            (identifier))
+          (traversal
+            (property
+              (identifier)))
+          (filter
+            (wildcard)))))))

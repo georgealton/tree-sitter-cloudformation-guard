@@ -195,41 +195,63 @@
                 }
               },
               {
-                "type": "REPEAT",
-                "content": {
-                  "type": "FIELD",
-                  "name": "argument",
-                  "content": {
-                    "type": "SEQ",
-                    "members": [
-                      {
-                        "type": "CHOICE",
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "FIELD",
+                    "name": "argument",
+                    "content": {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "SYMBOL",
+                          "name": "literal_value"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "variable_reference"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "query"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "REPEAT1",
+                    "content": {
+                      "type": "FIELD",
+                      "name": "argument",
+                      "content": {
+                        "type": "SEQ",
                         "members": [
                           {
-                            "type": "SYMBOL",
-                            "name": "literal_value"
+                            "type": "CHOICE",
+                            "members": [
+                              {
+                                "type": "SYMBOL",
+                                "name": "literal_value"
+                              },
+                              {
+                                "type": "SYMBOL",
+                                "name": "variable_reference"
+                              },
+                              {
+                                "type": "SYMBOL",
+                                "name": "query"
+                              }
+                            ]
                           },
-                          {
-                            "type": "SYMBOL",
-                            "name": "variable_reference"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "CHOICE",
-                        "members": [
                           {
                             "type": "STRING",
                             "value": ","
-                          },
-                          {
-                            "type": "BLANK"
                           }
                         ]
                       }
-                    ]
+                    }
                   }
-                }
+                ]
               },
               {
                 "type": "STRING",

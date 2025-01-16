@@ -241,7 +241,7 @@
     "fields": {
       "argument": {
         "multiple": true,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": ",",
@@ -249,6 +249,10 @@
           },
           {
             "type": "literal_value",
+            "named": true
+          },
+          {
+            "type": "query",
             "named": true
           },
           {
@@ -275,6 +279,10 @@
           },
           {
             "type": "literal_value",
+            "named": true
+          },
+          {
+            "type": "query",
             "named": true
           },
           {
