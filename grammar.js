@@ -151,10 +151,10 @@ module.exports = grammar({
       field("message", optional($.custom_message)),
     ),
 
-    _clauses: $ => seq(
+    _clauses: $ => prec.left(seq(
       choice($.clause, $.rule_clause),
       optional($.or_term)
-    ),
+    )),
 
     _filter_expression: $ => seq(
       optional($.some),
@@ -226,7 +226,7 @@ module.exports = grammar({
       "{", repeat(choice($.assignment, $._block, $._clauses)), "}"
     ),
 
-    _block: $ => choice($.when_block, $.query_block),
+    _block: $ => choice($.when_block, $.or_term, $.query_block),
 
     property: $ => choice(
       $.identifier,
