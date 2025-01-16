@@ -15,6 +15,9 @@ let t = x[ a == 1].y[b == 2].g
 let x = T."1A:B:C"[*]
 let x = T."1A:B:C"[0]
 let x = T."1A:B:C"[0].B
+let x = T [
+    x == 1
+]
 ---
 
 (guard

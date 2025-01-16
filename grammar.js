@@ -117,13 +117,13 @@ module.exports = grammar({
 
     literal_value: $ => choice($._primitive, $.map, $.list, $.range),
 
-    access: $ => seq(
+    access: $ => prec.right(seq(
       choice($.this, $.variable_reference, $.property),
-      repeat(choice($.traversal, $.filter)),
+      repeat(choice($.traversal, $.filter))),
     ),
 
     filter: $ => seq(
-      token.immediate("["),
+      "[",
       choice(
         $.wildcard,
         $.integer,
