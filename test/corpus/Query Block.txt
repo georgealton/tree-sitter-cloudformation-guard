@@ -181,6 +181,9 @@ Empty Query
 ===
 %X.Y {
 }
+
+%X.*{
+}
 ---
 
 (guard
@@ -190,7 +193,13 @@ Empty Query
         (variable_reference)
         (traversal
           (property
-            (identifier)))))))
+            (identifier))))))
+  (query_block
+    (query
+      (access
+        (variable_reference)
+        (traversal
+          (wildcard))))))
 
 ===
 Query With Clause
@@ -282,7 +291,7 @@ Query With Clause
           (integer))))))
 
 ===
-Query Filter 
+Query Filter
 ===
 
 %test.x[
@@ -310,7 +319,7 @@ Query Filter
             (property
               (identifier)))
           (clause
-            (query
+            left: (query
               (some)
               (access
                 (property
@@ -320,23 +329,23 @@ Query Filter
                 (traversal
                   (property
                     (identifier)))))
-            (binary_comparison
-              (binary_operator)
-              (literal_value
+            comparison: (binary_comparison
+              operator: (binary_operator)
+              right: (literal_value
                 (regex
-                  (regex_pattern))))))))
+                  pattern: (regex_pattern))))))))
     (query_block
       (query
         (access
           (property
             (identifier))))
       (clause
-        (query
+        left: (query
           (access
             (property
               (identifier))))
-        (binary_comparison
-          (binary_operator)
-          (query
+        comparison: (binary_comparison
+          operator: (binary_operator)
+          right: (query
             (access
               (variable_reference))))))))

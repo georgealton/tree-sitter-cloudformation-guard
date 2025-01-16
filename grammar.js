@@ -205,7 +205,7 @@ module.exports = grammar({
 
     query_block: $ => seq(
       $.query,
-      $._whitespace,
+      optional($._whitespace),
       "{", repeat(choice($.assignment, $._block, seq($.clause, optional($.or_term)))), "}",
     ),
 
