@@ -12,6 +12,10 @@
           "named": true
         },
         {
+          "type": "identifier",
+          "named": true
+        },
+        {
           "type": "property",
           "named": true
         },

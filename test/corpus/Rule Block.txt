@@ -248,3 +248,36 @@ rule test {
         argument: (literal_value
           (integer))))
     (or_term)))
+
+==================
+Rule With Rule Reference And Query
+==================
+
+rule test {
+    test
+    Properties {
+        x == 1
+    }
+}
+
+---
+
+(guard
+  (named_rule_block
+    name: (variable_name)
+    (rule_clause
+      name: (variable_name))
+(query_block
+          (query
+            (access
+              (property
+                (identifier))))
+          (clause
+            left: (query
+              (access
+                (property
+                  (identifier))))
+            comparison: (binary_comparison
+              operator: (binary_operator)
+              right: (literal_value
+                (integer)))))))

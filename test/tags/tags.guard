@@ -1,0 +1,8 @@
+let foo = 1
+#   ^ definition.function
+
+let bar = count(1)
+
+rule foo(p) {}
+
+rule base when foo("") {}

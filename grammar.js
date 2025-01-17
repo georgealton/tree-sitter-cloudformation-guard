@@ -55,7 +55,8 @@ module.exports = grammar({
       choice(
         field(
           "argument",
-          choice($.literal_value, $.variable_reference, $.query)
+          choice(
+            $.literal_value, $.variable_reference, $.query)
         ),
 
         field(
@@ -128,7 +129,7 @@ module.exports = grammar({
     literal_value: $ => choice($._primitive, $.map, $.list, $.range),
 
     access: $ => prec.right(seq(
-      choice($.this, $.variable_reference, $.property),
+      choice($.this, $.variable_reference, $.property, $.identifier),
       repeat(choice($.traversal, $.filter))),
     ),
 
@@ -239,7 +240,7 @@ module.exports = grammar({
     _block: $ => choice($.when_block, $.or_term, $.query_block),
 
     property: $ => choice(
-      $.identifier,
+      prec(1, $.identifier),
       prec(-1, $.string)
     ),
 

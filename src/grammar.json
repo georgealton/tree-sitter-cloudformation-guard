@@ -603,6 +603,10 @@
               {
                 "type": "SYMBOL",
                 "name": "property"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
               }
             ]
           },
@@ -1331,8 +1335,12 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "identifier"
+          "type": "PREC",
+          "value": 1,
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
         },
         {
           "type": "PREC",

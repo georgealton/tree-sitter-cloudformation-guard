@@ -1,4 +1,5 @@
 #include "tree_sitter/parser.h"
+#include <ctype.h>
 #include <wctype.h>
 #include <stdio.h>
 
@@ -53,7 +54,7 @@ static inline bool scan_rule_name(
          return true;
        }
 
-       while (iswspace(lexer->lookahead)) { skip(lexer); } 
+       while (isblank(lexer->lookahead)) { skip(lexer); } 
 
        switch (lexer->lookahead) {
         case 'o':
@@ -69,18 +70,9 @@ static inline bool scan_rule_name(
             }
             break;
 
-        // block start
         case '#':
-            lexer->mark_end(lexer);
-            return true;
-
-        // parameters start
         case '(':
-        // comment start
-        case '{':
-        // message start
         case '<':
-        // newline
         case '\r':
         case '\n':
             lexer->mark_end(lexer);

@@ -4,6 +4,9 @@
       "name": "guard",
       "path": ".",
       "camelcase": "Guard",
+      "tags": [
+        "queries/tags.scm"
+      ],
       "highlights": [
         "queries/highlights.scm"
       ],

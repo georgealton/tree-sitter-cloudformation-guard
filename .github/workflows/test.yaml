@@ -34,12 +34,14 @@ jobs:
       - run: ./tree-sitter init-config
 
       - timeout-minutes: 1
+        name: AWS Guard Rules Registry
         run: |
           for rule in aws-guard-rules/rules/aws/**/*.guard; do 
             ./tree-sitter parse --quiet "$rule" | tee -a $GITHUB_STEP_SUMMARY; 
           done | wc -l
 
       - timeout-minutes: 1
+        name:  AWS CloudFormation Guard Examples
         run: |
           for rule in cloudformation-guard/guard-examples/**/*.guard; do 
           ./tree-sitter parse --quiet "$rule" | tee -a $GITHUB_STEP_SUMMARY; 

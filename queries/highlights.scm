@@ -1,5 +1,8 @@
 (binary_operator) @operator
 (unary_operator) @function.builtin
+(not_keyword) @keyword.conditional
+(or_term) @keyword.operator
+(property) @property
 
 [
  "let"
@@ -12,7 +15,7 @@
 ] @keyword.conditional
 
 (comment) @comment 
-(wildcard) @string.special
+(wildcard) @character.special
 
 [
  "true"
@@ -49,4 +52,5 @@
 
 (this) @variable.builtin
 [(variable_name) (variable_reference)] @variable
+(function_call) @function_call
 
