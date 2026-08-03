@@ -1,171 +1,451 @@
 module.exports = grammar({
   name: 'guard',
 
+  word: $ => $.identifier,
+
   extras: $ => [
-    /[ \t\f]+/,
+    $._whitespace,
     $.comment,
   ],
 
-  word: $ => $.identifier,
-
-  externals: $ => [
-    $.custom_message,
-  ],
-
-  supertypes: $ => [
-    $._expression,
-    $._value,
-    $._statement,
-  ],
-
-  conflicts: $ => [
-    [$.query, $.resource_type_block],
-    [$.query, $.function_call],
-    [$.access, $.variable_reference],
-  ],
+  // No external scanner needed. Rule names are ordinary identifiers.
+  externals: $ => [],
 
   rules: {
-    source_file: $ => repeat(
+    guard: $ => repeat(
       choice(
-        $._statement,
-        $._newline,
+        $.assignment,
+        $._clauses,
+        $._block,
+        $.named_rule_block,
       )
     ),
 
-    _statement: $ => choice(
-      $.assignment,
-      $.rule_declaration,
-      $.query_block,
-      $.resource_type_block,
-      $.clause,
-      $.when_block,
+    // -----------------------------------------------------------------------
+    // Values
+    // -----------------------------------------------------------------------
+
+    _primitive: $ => choice(
+      $.string,
+      $.integer,
+      $.float,
+      $.regex,
+      $.bool,
     ),
 
-    _newline: _ => /\r?\n/,
-
-    comment: _ => token(
-      seq(
-        '#',
-        /[^\r\n]*/,
-        optional(/\r?\n/),
-      )
+    literal_value: $ => choice(
+      $._primitive,
+      $.map,
+      $.list,
+      $.range,
     ),
+
+    list: $ => seq(
+      '[',
+      repeat(seq(
+        field('item', $.literal_value),
+        choice(',', blank()),
+      )),
+      ']',
+    ),
+
+    map: $ => seq(
+      '{',
+      repeat1(
+        seq(
+          field('key', choice(
+            $.identifier,
+            $.string,
+          )),
+          ':',
+          field('value', choice(
+            $._primitive,
+            $.map,
+            $.list,
+          )),
+          choice(',', blank()),
+        )
+      ),
+      '}',
+    ),
+
+    range: $ => seq(
+      choice(
+        field('exclusive_start', 'r('),
+        field('inclusive_start', 'r['),
+      ),
+      field('start', choice(
+        $.integer,
+        $.float,
+      )),
+      ',',
+      field('end', choice(
+        $.integer,
+        $.float,
+      )),
+      choice(
+        field('exclusive_end', ')'),
+        field('inclusive_end', ']'),
+      ),
+    ),
+
+    regex: $ => seq(
+      '/',
+      field('pattern', $.regex_pattern),
+      token.immediate(prec(1, '/')),
+    ),
+
+    regex_pattern: $ => token.immediate(
+      prec(-1, repeat1(choice(
+        seq(
+          '[',
+          repeat(choice(
+            seq('\\', /./),
+            /[^\\\]\n\\]/,
+          )),
+          ']',
+        ),
+        seq('\\', /./),
+        /[^\/\\\[\n]/,
+      ))),
+    ),
+
+    // -----------------------------------------------------------------------
+    // Parameters / arguments / function calls
+    // -----------------------------------------------------------------------
+
+    parameters: $ => seq(
+      token.immediate('('),
+      repeat(
+        field('parameter', seq(
+          $.identifier,
+          choice(',', blank()),
+        ))
+      ),
+      ')',
+    ),
+
+    arguments: $ => seq(
+      token.immediate('('),
+      choice(
+        field('argument', choice(
+          $.literal_value,
+          $.variable_reference,
+          $.query,
+        )),
+        field('argument', seq(
+          repeat1(seq(
+            choice(
+              $.literal_value,
+              $.variable_reference,
+              $.query,
+            ),
+            ',',
+          )),
+          choice(
+            $.literal_value,
+            $.variable_reference,
+            $.query,
+          ),
+        )),
+      ),
+      ')',
+    ),
+
+    function_call: $ => seq(
+      field('name', $.identifier),
+      field('arguments', $.arguments),
+    ),
+
+    // -----------------------------------------------------------------------
+    // Queries
+    // -----------------------------------------------------------------------
+
+    query: $ => seq(
+      choice(
+        $.some,
+        blank(),
+      ),
+      $.access,
+    ),
+
+    access: $ => prec.right(0, seq(
+      choice(
+        $.this,
+        $.variable_reference,
+        $.property,
+        $.identifier,
+      ),
+      repeat(choice(
+        $.traversal,
+        $.filter,
+      )),
+    )),
+
+    traversal: $ => seq(
+      token.immediate('.'),
+      choice(
+        $.wildcard,
+        $.property,
+        $.variable_reference,
+      ),
+    ),
+
+    filter: $ => seq(
+      '[',
+      choice(
+        $.wildcard,
+        $.integer,
+        repeat1(seq(
+          $._filter_expression,
+          choice(
+            $.or_term,
+            blank(),
+          ),
+        )),
+      ),
+      ']',
+    ),
+
+    _filter_expression: $ => seq(
+      choice(
+        $.some,
+        blank(),
+      ),
+      choice(
+        seq(
+          field('left', choice(
+            $.access,
+            $.string,
+          )),
+          field('comparison', choice(
+            $.unary_comparison,
+            $.binary_comparison,
+          )),
+        ),
+        seq(
+          $.access,
+          '{',
+          repeat(choice(
+            $.query_block,
+            seq(
+              $.clause,
+              choice(
+                $.or_term,
+                blank(),
+              ),
+            ),
+          )),
+          '}',
+        ),
+      ),
+    ),
+
+    // -----------------------------------------------------------------------
+    // Comparisons / clauses
+    // -----------------------------------------------------------------------
+
+    clause: $ => seq(
+      field('left', choice(
+        $.query,
+        $.literal_value,
+      )),
+      $._whitespace,
+      field('comparison', choice(
+        $.unary_comparison,
+        $.binary_comparison,
+      )),
+      field('message', choice(
+        $.custom_message,
+        blank(),
+      )),
+    ),
+
+    _clauses: $ => choice(
+      prec(2, $.clause),
+      prec(1, $.rule_clause),
+    ),
+
+    rule_clause: $ => seq(
+      choice(
+        $.not_keyword,
+        blank(),
+      ),
+      field('name', $.variable_name),
+      choice(
+        $.arguments,
+        blank(),
+      ),
+      field('message', choice(
+        $.custom_message,
+        blank(),
+      )),
+    ),
+
+    unary_comparison: $ => seq(
+      choice(
+        $.not_keyword,
+        blank(),
+      ),
+      field('operator', $.unary_operator),
+    ),
+
+    binary_comparison: $ => seq(
+      choice(
+        choice(
+          $.not_keyword,
+          $.keys_operator,
+        ),
+        blank(),
+      ),
+      field('operator', $.binary_operator),
+      field('right', choice(
+        $.query,
+        $.literal_value,
+      )),
+    ),
+
+    // -----------------------------------------------------------------------
+    // Assignments
+    // -----------------------------------------------------------------------
 
     assignment: $ => seq(
       'let',
       field('name', $.variable_name),
-      choice('=', ':='),
-      field('value', $._value),
-    ),
-
-    rule_declaration: $ => seq(
-      'rule',
-      field('name', $.rule_name),
-      optional(field('condition', $.when_expression)),
-      '{',
-      field('body', $.rule_body),
-      '}',
-    ),
-
-    rule_name: $ => $.identifier,
-
-    rule_body: $ => repeat(
       choice(
-        $.assignment,
-        $.resource_type_block,
-        $.query_block,
-        $.when_block,
-        $.clause,
-        $._newline,
-      )
+        '=',
+        ':=',
+      ),
+      field('value', choice(
+        $.function_call,
+        $.query,
+        $.literal_value,
+      )),
     ),
+
+    variable_reference: $ => seq(
+      '%',
+      field(
+        'name',
+        token.immediate(/[a-zA-Z]+[a-zA-Z0-9_]*/),
+      ),
+    ),
+
+    // -----------------------------------------------------------------------
+    // When blocks
+    // -----------------------------------------------------------------------
 
     when_expression: $ => seq(
       'when',
-      field('condition', $._expression),
+      prec.left(
+        1,
+        repeat1(
+          choice(
+            $._clauses,
+            $.or_term,
+          ),
+        ),
+      ),
     ),
 
     when_block: $ => seq(
       $.when_expression,
       '{',
-      field('body', $.rule_body),
-      '}',
-    ),
-
-    resource_type_block: $ => seq(
-      field('type', $.resource_type),
-      '{',
-      field('body', $.block),
-      '}',
-    ),
-
-    resource_type: _ => token(
-      /[A-Za-z][A-Za-z0-9_-]*(?:::[A-Za-z][A-Za-z0-9_-]*)+/
-    ),
-
-    block: $ => repeat(
-      choice(
+      repeat(choice(
         $.assignment,
-        $.query_block,
-        $.resource_type_block,
-        $.when_block,
+        $._block,
+        $.or_term,
         $.clause,
-        $._newline,
-      )
+      )),
+      '}',
     ),
+
+    // -----------------------------------------------------------------------
+    // Query blocks
+    // -----------------------------------------------------------------------
 
     query_block: $ => seq(
-      field('query', $.query),
+      $.query,
+      choice(
+        $._whitespace,
+        blank(),
+      ),
       '{',
-      field('body', $.block),
+      repeat(choice(
+        $.assignment,
+        $._block,
+        $.or_term,
+        $.clause,
+      )),
       '}',
     ),
 
-    clause: $ => seq(
-      field('left', choice(
-        $.query,
-        $.variable_reference,
-        $.literal_value,
-      )),
-      field('comparison', $.comparison),
-      optional(field('message', $.custom_message)),
-    ),
+    // -----------------------------------------------------------------------
+    // Rules
+    // -----------------------------------------------------------------------
 
-    comparison: $ => choice(
-      $.unary_comparison,
-      $.binary_comparison,
-    ),
-
-    unary_comparison: $ => seq(
-      optional(field('negation', $.not_operator)),
-      field('operator', $.unary_operator),
-    ),
-
-    binary_comparison: $ => seq(
-      optional(field('modifier', choice(
-        $.not_operator,
-        $.keys_operator,
-      ))),
-      field('operator', $.binary_operator),
-      field('right', choice(
-        $.query,
-        $.variable_reference,
-        $.literal_value,
+    _rule_declaration: $ => seq(
+      'rule',
+      field('name', $.variable_name),
+      field('parameters', choice(
+        $.parameters,
+        blank(),
       )),
     ),
 
-    binary_operator: _ => choice(
+    named_rule_block: $ => seq(
+      $._rule_declaration,
+      field('condition', choice(
+        $.when_expression,
+        blank(),
+      )),
+      '{',
+      repeat(choice(
+        $.assignment,
+        $._block,
+        $._clauses,
+        $.or_term,
+      )),
+      '}',
+    ),
+
+    _block: $ => choice(
+      $.when_block,
+      $.or_term,
+      $.query_block,
+    ),
+
+    // -----------------------------------------------------------------------
+    // Names / properties
+    // -----------------------------------------------------------------------
+
+    property: $ => choice(
+      prec(1, $.identifier),
+      prec(-1, $.string),
+    ),
+
+    identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+
+    variable_name: $ => token(
+      prec(-1, /[a-zA-Z_][a-zA-Z0-9_]*/),
+    ),
+
+    // -----------------------------------------------------------------------
+    // Operators / keywords
+    // -----------------------------------------------------------------------
+
+    binary_operator: $ => choice(
       '>=',
       '<=',
       '>',
       '<',
-      '==',
-      '!=',
       'in',
       'IN',
+      '==',
+      '!=',
     ),
 
-    unary_operator: _ => choice(
+    unary_operator: $ => choice(
       'exists',
       'EXISTS',
       'empty',
@@ -180,285 +460,79 @@ module.exports = grammar({
       'IS_NULL',
     ),
 
-    not_operator: _ => choice(
-      'not',
-      'NOT',
-      '!',
-    ),
-
-    keys_operator: _ => choice(
-      'keys',
-      'KEYS',
-    ),
-
-    _expression: $ => choice(
-      $.or_expression,
-      $.clause_expression,
-      $.variable_reference,
-      $.query,
-      $.literal_value,
-    ),
-
-    clause_expression: $ => $.clause,
-
-    or_expression: $ => prec.left(
-      seq(
-        $.clause_expression,
-        repeat1(
-          seq(
-            $.or_operator,
-            $.clause_expression,
-          )
-        ),
-      )
-    ),
-
-    or_operator: _ => choice(
+    or_term: $ => choice(
       'or',
       'OR',
       '|OR|',
     ),
 
-    query: $ => seq(
-      optional(field('quantifier', $.some_operator)),
-      field('access', $.access),
+    not_keyword: $ => choice(
+      'NOT',
+      'not',
+      '!',
     ),
 
-    some_operator: _ => choice(
+    keys_operator: $ => choice(
+      'keys',
+      'KEYS',
+    ),
+
+    some: $ => choice(
       'some',
       'SOME',
     ),
 
-    access: $ => prec.left(
-      seq(
-        choice(
-          $.this,
-          $.variable_reference,
-          $.property,
-          $.identifier,
-        ),
-        repeat(
-          choice(
-            $.traversal,
-            $.filter,
-          )
-        ),
-      )
-    ),
-
-    this: _ => choice(
+    this: $ => choice(
       'this',
       'THIS',
     ),
 
-    traversal: $ => seq(
-      token.immediate('.'),
-      field('property', choice(
-        $.wildcard,
-        $.property,
-        $.variable_reference,
-      )),
-    ),
+    wildcard: $ => '*',
 
-    wildcard: _ => '*',
-
-    property: $ => choice(
-      $.identifier,
-      $.string,
-    ),
-
-    filter: $ => seq(
-      '[',
-      field('expression', $.filter_expression),
-      ']',
-    ),
-
-    filter_expression: $ => prec.left(
-      seq(
-        $.filter_clause,
-        repeat(
-          seq(
-            optional($.or_operator),
-            $.filter_clause,
-          )
-        ),
-      )
-    ),
-
-    filter_clause: $ => seq(
-      field('left', choice(
-        $.query,
-        $.variable_reference,
-        $.literal_value,
-        $.filter_access,
-      )),
-      field('comparison', $.comparison),
-      optional(field('message', $.custom_message)),
-    ),
-
-    filter_access: $ => $.access,
-
-    variable_reference: $ => seq(
-      '%',
-      field('name', $.variable_name),
-    ),
-
-    variable_name: _ => token(
-      /[A-Za-z][A-Za-z0-9_]*/
-    ),
-
-    _value: $ => choice(
-      $.literal_value,
-      $.variable_reference,
-      $.query,
-      $.function_call,
-    ),
-
-    literal_value: $ => choice(
-      $._primitive,
-      $.map,
-      $.list,
-      $.range,
-    ),
-
-    _primitive: $ => choice(
-      $.string,
-      $.integer,
-      $.float,
-      $.boolean,
-      $.regex,
-    ),
-
-    function_call: $ => seq(
-      field('name', $.identifier),
-      field('arguments', $.arguments),
-    ),
-
-    arguments: $ => seq(
-      token.immediate('('),
-      optional(commaSep($._argument)),
-      ')',
-    ),
-
-    _argument: $ => choice(
-      $.literal_value,
-      $.variable_reference,
-      $.query,
-    ),
-
-    map: $ => seq(
-      '{',
-      optional(commaSep($.map_entry)),
-      optional(','),
-      '}',
-    ),
-
-    map_entry: $ => seq(
-      field('key', choice(
-        $.identifier,
-        $.string,
-      )),
-      ':',
-      field('value', $._value),
-    ),
-
-    list: $ => seq(
-      '[',
-      optional(commaSep($.list_item)),
-      optional(','),
-      ']',
-    ),
-
-    list_item: $ => field(
-      'value',
-      $._value,
-    ),
-
-    range: $ => seq(
-      field('start', choice(
-        alias('r[', $.inclusive_start),
-        alias('r(', $.exclusive_start),
-      )),
-      field('lower', choice(
-        $.integer,
-        $.float,
-      )),
-      ',',
-      field('upper', choice(
-        $.integer,
-        $.float,
-      )),
-      field('end', choice(
-        alias(']', $.inclusive_end),
-        alias(')', $.exclusive_end),
-      )),
-    ),
+    // -----------------------------------------------------------------------
+    // Literals
+    // -----------------------------------------------------------------------
 
     string: $ => choice(
-      $.double_string,
-      $.single_string,
-    ),
-
-    double_string: $ => seq(
-      '"',
-      repeat(
-        choice(
-          $.escape_sequence,
-          /[^"\\\r\n]/,
-        )
+      seq(
+        '"',
+        /[^"]*/,
+        '"',
       ),
-      '"',
-    ),
-
-    single_string: $ => seq(
-      "'",
-      repeat(
-        choice(
-          $.escape_sequence,
-          /[^'\\\r\n]/,
-        )
+      seq(
+        "'",
+        /[^']*/,
+        "'",
       ),
-      "'",
     ),
 
-    escape_sequence: _ => /\\./,
-
-    regex: $ => seq(
-      '/',
-      field('pattern', $.regex_pattern),
-      token.immediate('/'),
-    ),
-
-    regex_pattern: _ => token(
-      /(?:\\.|[^\n/\\]|\[(?:\\.|[^\]\\\n])*\])+/,
-    ),
-
-    boolean: _ => choice(
-      'true',
+    bool: $ => choice(
       'True',
-      'TRUE',
-      'false',
+      'true',
       'False',
-      'FALSE',
+      'false',
     ),
 
-    integer: _ => token(
-      /-?(?:0|[1-9][0-9]*)/
+    integer: $ => /-?\d+/,
+
+    float: $ => /\d\.\d+/,
+
+    // -----------------------------------------------------------------------
+    // Messages / comments / whitespace
+    // -----------------------------------------------------------------------
+
+    custom_message: $ => seq(
+      '<<',
+      field('body', repeat(/./)),
+      '>>',
     ),
 
-    float: _ => token(
-      /-?(?:[0-9]+\.[0-9]+)/
-    ),
+    comment: $ => token(seq(
+      '#',
+      repeat(/./),
+      /\r?\n/,
+    )),
 
-    identifier: _ => token(
-      /[A-Za-z][A-Za-z0-9_-]*/
-    ),
+    _whitespace: $ => /\s+/,
   },
 });
-
-function commaSep(rule) {
-  return seq(
-    rule,
-    repeat(seq(',', rule)),
-  );
-}
